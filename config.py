@@ -5,11 +5,10 @@ class Settings(BaseSettings):
     # Hashtag to monitor (without #)
     hashtag: str = "DeKievitHarmelen"
 
-    # Fediverse instances to poll
+    # Fediverse instances to poll (must support unauthenticated hashtag timeline API)
     fedi_instances: list[str] = [
         "mastodon.social",
         "mastodon.nl",
-        "pixelfed.social",
     ]
 
     # Polling interval in minutes
