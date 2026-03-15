@@ -76,6 +76,7 @@ Build a custom website that combines the **public accessibility and informationa
 - [ ] **Lightbox viewing** — click to enlarge with navigation between photos
 - [ ] **Recent photos** section on the homepage showing latest uploads
 - [ ] Optional captions and descriptions per photo
+- [ ] **Multi-image posts** — when a Fediverse post or upload contains multiple photos, each image is displayed as its own gallery card (data model preserves the submission grouping for potential future carousel view)
 
 #### 3.3.2 Photo Submission (Gathering)
 
@@ -90,12 +91,15 @@ Build a custom website that combines the **public accessibility and informationa
 - [ ] **Auto-resize/compress** on upload — serve optimized versions, store originals
 - [ ] **Spam prevention** — honeypot field, rate limiting (max N submissions per IP/hour), file type validation (jpg/png/webp only), max file size (~15MB per photo)
 - [ ] **Fediverse hashtag ingestion** ⭐ PoC — poll `#DeKievitHarmelen` on Mastodon/Pixelfed via public API (`GET /api/v1/timelines/tag/...`), feed matching posts into the moderation queue automatically
+  - ⚠️ **Pixelfed limitation**: Pixelfed's hashtag timeline API requires authentication (302 → /login); removed from default poll list. Pixelfed posts *may* appear via federation to Mastodon instances, but this is unreliable.
+  - ⚠️ **Cross-instance deduplication**: the same federated post appears on multiple Mastodon instances; dedup uses canonical `source_url` to prevent duplicates.
+- [ ] **Future channel: email** — submit photos by emailing a dedicated address *(deferred to WordPress phase — WordPress handles inbound email natively via plugins like Postie)*
 - [ ] **Future channel: Signal** — explore Signal integration for photo submission when APIs allow. Not in PoC scope.
 
 #### 3.3.3 Moderation Queue
 
 - [ ] **Unified moderation queue** — all submitted photos (from any channel) land here
-- [ ] **Email notification** to moderators when new submissions arrive
+- [ ] **Email notification** to moderators when new submissions arrive *(deferred to WordPress phase)*
 - [ ] **Approve / reject** per photo or batch-approve all in a submission
 - [ ] Approved photos appear in the linked album immediately
 - [ ] **Photo removal process** — clear way for anyone to request removal of a photo (GDPR compliance)
