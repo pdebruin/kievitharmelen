@@ -47,7 +47,9 @@ async def poll_instance(instance: str, base_url: str | None = None) -> int:
     for post in reversed(posts):
         post_id = str(post["id"])
 
-        if db.submission_exists_by_source(post_id, instance):
+        post_url = post.get("url")
+
+        if db.submission_exists_by_source(post_id, instance, source_url=post_url):
             continue
 
         media = [a for a in post.get("media_attachments", []) if a["type"] == "image"]

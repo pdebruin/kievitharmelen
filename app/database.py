@@ -186,9 +186,19 @@ def count_submissions(db_path: str | None = None) -> dict[str, int]:
 
 
 def submission_exists_by_source(
-    source_id: str, source_instance: str, db_path: str | None = None
+    source_id: str, source_instance: str, source_url: str | None = None,
+    db_path: str | None = None,
 ) -> bool:
     with get_connection(db_path) as conn:
+        # Check by source URL first (deduplicates across instances)
+        if source_url:
+            row = conn.execute(
+                "SELECT 1 FROM submissions WHERE source_url = ?",
+                (source_url,),
+            ).fetchone()
+            if row:
+                return True
+        # Fall back to instance-specific check
         row = conn.execute(
             "SELECT 1 FROM submissions WHERE source_id = ? AND source_instance = ?",
             (source_id, source_instance),
