@@ -11,6 +11,10 @@ class Settings(BaseSettings):
         "mastodon.nl",
     ]
 
+    # Per-instance auth tokens for instances that require authentication (e.g. Pixelfed)
+    # Format: '{"pixelfed.social": "your-token-here"}'
+    fedi_instance_tokens: dict[str, str] = {}
+
     # Polling interval in minutes
     poll_interval_minutes: int = 15
 

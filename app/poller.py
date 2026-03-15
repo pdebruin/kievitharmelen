@@ -29,9 +29,14 @@ async def poll_instance(instance: str, base_url: str | None = None) -> int:
     if state and state["last_seen_id"]:
         params["since_id"] = state["last_seen_id"]
 
+    headers = {}
+    token = settings.fedi_instance_tokens.get(instance)
+    if token:
+        headers["Authorization"] = f"Bearer {token}"
+
     try:
-        async with httpx.AsyncClient(timeout=30) as client:
-            resp = await client.get(endpoint, params=params)
+        async with httpx.AsyncClient(timeout=30, follow_redirects=False) as client:
+            resp = await client.get(endpoint, params=params, headers=headers)
             resp.raise_for_status()
             posts = resp.json()
     except httpx.HTTPError as e:
