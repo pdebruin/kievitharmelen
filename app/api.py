@@ -86,3 +86,24 @@ async def moderate_submission(
     if not success:
         raise HTTPException(status_code=404, detail="Submission not found")
     return {"message": f"Submission {body.status}", "id": submission_id}
+
+
+@router.get("/status")
+async def health_status():
+    """Public health/status endpoint — shows poller state and submission counts."""
+    counts = db.count_submissions()
+
+    poller_states = []
+    for instance in __import__("config").settings.fedi_instances:
+        state = db.get_poller_state(instance)
+        poller_states.append({
+            "instance": instance,
+            "last_polled_at": state["last_polled_at"] if state else None,
+            "last_seen_id": state["last_seen_id"] if state else None,
+        })
+
+    return {
+        "status": "ok",
+        "submissions": counts,
+        "poller": poller_states,
+    }
