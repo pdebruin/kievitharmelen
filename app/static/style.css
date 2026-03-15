@@ -1,0 +1,443 @@
+/* De Kievit Harmelen — Brand Colors */
+:root {
+    --sage: #B5C1B4;
+    --charcoal: #3A3B3D;
+    --beige: #DCD9C6;
+    --white: #FFFFFF;
+    --sage-dark: #97a896;
+    --error: #c0392b;
+    --success: #27ae60;
+}
+
+/* Reset */
+*, *::before, *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    color: var(--charcoal);
+    background: var(--white);
+    line-height: 1.6;
+}
+
+a {
+    color: var(--charcoal);
+}
+
+/* Top Navigation — beige */
+.top-nav {
+    background: var(--beige);
+    padding: 0.5rem 0;
+}
+
+.nav-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 1rem;
+    display: flex;
+    gap: 1.5rem;
+}
+
+.nav-link {
+    text-decoration: none;
+    font-size: 0.9rem;
+    font-weight: 500;
+    padding: 0.25rem 0;
+}
+
+.nav-link:hover {
+    text-decoration: underline;
+}
+
+/* Header — sage green */
+.site-header {
+    background: var(--sage);
+    padding: 2rem 0;
+    text-align: center;
+}
+
+.header-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 1rem;
+}
+
+.site-title {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--charcoal);
+    margin-bottom: 0.25rem;
+}
+
+.site-subtitle {
+    font-size: 1rem;
+    color: var(--charcoal);
+    opacity: 0.8;
+}
+
+/* Content — white */
+.content {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem 1rem;
+    min-height: 60vh;
+}
+
+/* Footer — charcoal */
+.site-footer {
+    background: var(--charcoal);
+    color: var(--white);
+    padding: 1.5rem 0;
+    text-align: center;
+}
+
+.footer-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 1rem;
+}
+
+.footer-links a {
+    color: var(--sage);
+    font-size: 0.85rem;
+}
+
+/* Photo Grid */
+.photo-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1.5rem;
+    margin-top: 1.5rem;
+}
+
+.photo-card {
+    background: var(--white);
+    border: 1px solid var(--beige);
+    border-radius: 8px;
+    overflow: hidden;
+    transition: box-shadow 0.2s;
+}
+
+.photo-card:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.photo-wrapper {
+    aspect-ratio: 4/3;
+    overflow: hidden;
+    cursor: pointer;
+}
+
+.photo-wrapper img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s;
+}
+
+.photo-wrapper:hover img {
+    transform: scale(1.05);
+}
+
+.photo-info {
+    padding: 0.75rem 1rem;
+}
+
+.photo-attribution {
+    font-size: 0.85rem;
+    color: #555;
+    margin-bottom: 0.25rem;
+}
+
+.photo-attribution a {
+    color: var(--sage-dark);
+}
+
+.photo-description {
+    font-size: 0.9rem;
+    margin-bottom: 0.25rem;
+}
+
+/* Share buttons */
+.share-buttons {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+    font-size: 0.8rem;
+}
+
+.share-buttons a,
+.share-buttons button {
+    background: var(--beige);
+    border: none;
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.8rem;
+    text-decoration: none;
+    color: var(--charcoal);
+}
+
+.share-buttons a:hover,
+.share-buttons button:hover {
+    background: var(--sage);
+}
+
+/* Lightbox */
+.lightbox {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.9);
+    z-index: 1000;
+    justify-content: center;
+    align-items: center;
+}
+
+.lightbox.active {
+    display: flex;
+}
+
+.lightbox img {
+    max-width: 90vw;
+    max-height: 90vh;
+    object-fit: contain;
+}
+
+.lightbox-close {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    background: none;
+    border: none;
+    color: white;
+    font-size: 2rem;
+    cursor: pointer;
+}
+
+/* Upload Form */
+.upload-section {
+    max-width: 600px;
+}
+
+.upload-form {
+    margin-top: 1.5rem;
+}
+
+.form-group {
+    margin-bottom: 1.25rem;
+}
+
+.form-group label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 0.25rem;
+    font-size: 0.95rem;
+}
+
+.form-group input[type="text"],
+.form-group input[type="email"],
+.form-group textarea {
+    width: 100%;
+    padding: 0.5rem 0.75rem;
+    border: 1px solid var(--beige);
+    border-radius: 6px;
+    font-size: 1rem;
+    font-family: inherit;
+}
+
+.form-group input:focus,
+.form-group textarea:focus {
+    outline: none;
+    border-color: var(--sage);
+    box-shadow: 0 0 0 3px rgba(181, 193, 180, 0.3);
+}
+
+.form-help {
+    font-size: 0.8rem;
+    color: #666;
+    margin-top: 0.25rem;
+}
+
+.checkbox-group label {
+    display: flex;
+    gap: 0.5rem;
+    align-items: flex-start;
+    font-weight: normal;
+}
+
+.checkbox-group input[type="checkbox"] {
+    margin-top: 0.25rem;
+}
+
+/* Buttons */
+.btn {
+    display: inline-block;
+    padding: 0.6rem 1.5rem;
+    border-radius: 6px;
+    border: none;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    text-decoration: none;
+    transition: background 0.2s;
+}
+
+.btn-primary {
+    background: var(--sage);
+    color: var(--charcoal);
+}
+
+.btn-primary:hover {
+    background: var(--sage-dark);
+}
+
+.btn-approve {
+    background: var(--success);
+    color: white;
+    padding: 0.4rem 1rem;
+    font-size: 0.9rem;
+}
+
+.btn-reject {
+    background: var(--error);
+    color: white;
+    padding: 0.4rem 1rem;
+    font-size: 0.9rem;
+}
+
+.btn-undo {
+    background: #666;
+    color: white;
+    padding: 0.4rem 1rem;
+    font-size: 0.9rem;
+}
+
+/* Upload result messages */
+.upload-result {
+    margin-top: 1rem;
+    padding: 1rem;
+    border-radius: 6px;
+    font-weight: 500;
+}
+
+.upload-result.success {
+    background: #d4edda;
+    color: #155724;
+}
+
+.upload-result.error {
+    background: #f8d7da;
+    color: #721c24;
+}
+
+/* Admin */
+.admin-section h3 {
+    margin-top: 2rem;
+    margin-bottom: 0.75rem;
+}
+
+.submission-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.submission-card {
+    border: 1px solid var(--beige);
+    border-radius: 8px;
+    padding: 1rem;
+}
+
+.submission-card.pending {
+    border-left: 4px solid #f39c12;
+}
+
+.submission-card.approved {
+    border-left: 4px solid var(--success);
+}
+
+.submission-card.rejected {
+    border-left: 4px solid var(--error);
+}
+
+.submission-header {
+    font-size: 0.9rem;
+    margin-bottom: 0.5rem;
+}
+
+.source-badge {
+    display: inline-block;
+    padding: 0.1rem 0.4rem;
+    border-radius: 3px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.source-badge.fediverse {
+    background: #6364ff;
+    color: white;
+}
+
+.source-badge.upload {
+    background: var(--sage);
+    color: var(--charcoal);
+}
+
+.submission-desc {
+    font-size: 0.9rem;
+    margin-bottom: 0.5rem;
+    color: #555;
+}
+
+.submission-photos {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    margin-bottom: 0.5rem;
+}
+
+.thumb {
+    width: 120px;
+    height: 90px;
+    object-fit: cover;
+    border-radius: 4px;
+}
+
+.submission-actions {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.status-approved { color: var(--success); font-weight: 600; }
+.status-rejected { color: var(--error); font-weight: 600; }
+
+/* Empty state */
+.empty-state {
+    text-align: center;
+    padding: 3rem 1rem;
+    color: #666;
+}
+
+.empty-state .btn {
+    margin-top: 1rem;
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+    .photo-grid {
+        grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+        gap: 0.75rem;
+    }
+
+    .site-title { font-size: 1.5rem; }
+
+    .thumb {
+        width: 80px;
+        height: 60px;
+    }
+}

@@ -1,0 +1,30 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+
+# Database
+*.db
+
+# Photos (downloaded/uploaded images)
+photos/
+
+# Test artifacts
+test_photos/
+test_kievit.db
+tests/mock_media/
+tests/sample_images/test_generated.*
+.pytest_cache/
+
+# Environment / secrets
+.env
+*.env
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db

@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+
+{% block title %}Deel je foto's — De Kievit Harmelen{% endblock %}
+
+{% block content %}
+<section class="upload-section">
+    <h2>Deel je foto's</h2>
+    <p>Heb je mooie foto's gemaakt bij De Kievit? Deel ze met de gemeenschap! Je foto's verschijnen na goedkeuring.</p>
+
+    <form action="/upload" method="post" enctype="multipart/form-data" class="upload-form" id="upload-form">
+        <div class="form-group">
+            <label for="name">Je naam *</label>
+            <input type="text" id="name" name="name" required placeholder="Jan de Vries">
+        </div>
+
+        <div class="form-group">
+            <label for="email">Je e-mailadres *</label>
+            <input type="email" id="email" name="email" required placeholder="jan@voorbeeld.nl">
+        </div>
+
+        <div class="form-group">
+            <label for="description">Beschrijving</label>
+            <textarea id="description" name="description" rows="3" placeholder="Waar en wanneer zijn deze foto's genomen?"></textarea>
+        </div>
+
+        <div class="form-group">
+            <label for="files">Foto's * (max {{ settings.max_upload_files }}, jpg/png/webp)</label>
+            <input type="file" id="files" name="files" multiple accept=".jpg,.jpeg,.png,.webp" required>
+            <p class="form-help">Maximaal {{ settings.max_file_size_mb }}MB per foto</p>
+        </div>
+
+        <!-- Honeypot — hidden from humans, bots fill it in -->
+        <div style="display: none;" aria-hidden="true">
+            <label for="website">Website</label>
+            <input type="text" id="website" name="website" tabindex="-1" autocomplete="off">
+        </div>
+
+        <div class="form-group checkbox-group">
+            <label>
+                <input type="checkbox" name="consent" value="true" required>
+                Ik bevestig dat de gefotografeerde personen toestemming hebben gegeven voor publicatie.
+            </label>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Versturen</button>
+    </form>
+
+    <div id="upload-result" class="upload-result" style="display: none;"></div>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.getElementById('upload-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const form = e.target;
+    const result = document.getElementById('upload-result');
+    const btn = form.querySelector('button[type="submit"]');
+
+    btn.disabled = true;
+    btn.textContent = 'Bezig met uploaden...';
+
+    try {
+        const formData = new FormData(form);
+        const resp = await fetch('/upload', { method: 'POST', body: formData });
+        const data = await resp.json();
+
+        if (resp.ok) {
+            result.className = 'upload-result success';
+            result.textContent = data.message;
+            form.reset();
+        } else {
+            result.className = 'upload-result error';
+            result.textContent = data.detail || 'Er ging iets mis. Probeer het opnieuw.';
+        }
+    } catch (err) {
+        result.className = 'upload-result error';
+        result.textContent = 'Verbindingsfout. Probeer het opnieuw.';
+    }
+
+    result.style.display = 'block';
+    btn.disabled = false;
+    btn.textContent = 'Versturen';
+});
+</script>
+{% endblock %}

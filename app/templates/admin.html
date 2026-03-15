@@ -1,0 +1,167 @@
+{% extends "base.html" %}
+
+{% block title %}Beheer — De Kievit Harmelen{% endblock %}
+
+{% block head %}
+<style>
+    .admin-note {
+        background: #DCD9C6;
+        padding: 1rem;
+        border-radius: 8px;
+        margin-bottom: 1.5rem;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<section class="admin-section">
+    <h2>Moderatie</h2>
+
+    <div class="admin-note">
+        <strong>Status:</strong>
+        {{ counts.get('pending', 0) }} wachtend ·
+        {{ counts.get('approved', 0) }} goedgekeurd ·
+        {{ counts.get('rejected', 0) }} afgewezen ·
+        {{ counts.get('total', 0) }} totaal
+    </div>
+
+    <h3>Wachtend op goedkeuring ({{ pending|length }})</h3>
+    {% if pending %}
+    <div class="submission-list">
+        {% for sub in pending %}
+        <div class="submission-card pending" id="sub-{{ sub.id }}">
+            <div class="submission-header">
+                <span class="source-badge {{ sub.source }}">{{ sub.source }}</span>
+                {% if sub.source == 'fediverse' %}
+                <strong>{{ sub.author_name or sub.author_handle }}</strong>
+                {% else %}
+                <strong>{{ sub.submitter_name }}</strong> ({{ sub.submitter_email }})
+                {% endif %}
+                · <time>{{ sub.created_at[:16] }}</time>
+                {% if sub.source_url %}
+                · <a href="{{ sub.source_url }}" target="_blank">Bron</a>
+                {% endif %}
+            </div>
+
+            {% if sub.description %}
+            <p class="submission-desc">{{ sub.description }}</p>
+            {% endif %}
+
+            <div class="submission-photos">
+                {% for photo in sub.photos %}
+                <img src="/photos/{{ photo.thumbnail_path.split('/')[-1] if photo.thumbnail_path else '' }}"
+                     alt="{{ photo.alt_text or 'Foto' }}" class="thumb">
+                {% endfor %}
+            </div>
+
+            <div class="submission-actions">
+                <button class="btn btn-approve" onclick="moderate('{{ sub.id }}', 'approved')">✅ Goedkeuren</button>
+                <button class="btn btn-reject" onclick="moderate('{{ sub.id }}', 'rejected')">❌ Afwijzen</button>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <p class="empty-state">Geen wachtende inzendingen.</p>
+    {% endif %}
+
+    <h3>Recent goedgekeurd ({{ approved|length }})</h3>
+    {% if approved %}
+    <div class="submission-list">
+        {% for sub in approved %}
+        <div class="submission-card approved" id="sub-{{ sub.id }}">
+            <div class="submission-header">
+                <span class="source-badge {{ sub.source }}">{{ sub.source }}</span>
+                <strong>{{ sub.author_name or sub.submitter_name or 'Onbekend' }}</strong>
+                · <time>{{ sub.created_at[:16] }}</time>
+                · <span class="status-approved">Goedgekeurd</span>
+            </div>
+            <div class="submission-photos">
+                {% for photo in sub.photos %}
+                <img src="/photos/{{ photo.thumbnail_path.split('/')[-1] if photo.thumbnail_path else '' }}"
+                     alt="{{ photo.alt_text or 'Foto' }}" class="thumb">
+                {% endfor %}
+            </div>
+            <div class="submission-actions">
+                <button class="btn btn-reject" onclick="moderate('{{ sub.id }}', 'rejected')">❌ Toch afwijzen</button>
+                <button class="btn btn-undo" onclick="moderate('{{ sub.id }}', 'pending')">↩ Terug naar wachtrij</button>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <p class="empty-state">Nog niets goedgekeurd.</p>
+    {% endif %}
+
+    <h3>Recent afgewezen ({{ rejected|length }})</h3>
+    {% if rejected %}
+    <div class="submission-list">
+        {% for sub in rejected %}
+        <div class="submission-card rejected" id="sub-{{ sub.id }}">
+            <div class="submission-header">
+                <span class="source-badge {{ sub.source }}">{{ sub.source }}</span>
+                <strong>{{ sub.author_name or sub.submitter_name or 'Onbekend' }}</strong>
+                · <time>{{ sub.created_at[:16] }}</time>
+                · <span class="status-rejected">Afgewezen</span>
+            </div>
+            <div class="submission-photos">
+                {% for photo in sub.photos %}
+                <img src="/photos/{{ photo.thumbnail_path.split('/')[-1] if photo.thumbnail_path else '' }}"
+                     alt="{{ photo.alt_text or 'Foto' }}" class="thumb">
+                {% endfor %}
+            </div>
+            <div class="submission-actions">
+                <button class="btn btn-approve" onclick="moderate('{{ sub.id }}', 'approved')">✅ Toch goedkeuren</button>
+                <button class="btn btn-undo" onclick="moderate('{{ sub.id }}', 'pending')">↩ Terug naar wachtrij</button>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <p class="empty-state">Geen afgewezen inzendingen.</p>
+    {% endif %}
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script>
+let ADMIN_TOKEN = sessionStorage.getItem('admin_token');
+if (!ADMIN_TOKEN) {
+    ADMIN_TOKEN = prompt('Admin token:');
+    if (ADMIN_TOKEN) sessionStorage.setItem('admin_token', ADMIN_TOKEN);
+}
+
+async function moderate(id, status) {
+    const btn = event.target;
+    btn.disabled = true;
+    btn.textContent = 'Bezig...';
+
+    try {
+        const resp = await fetch(`/api/submissions/${id}/moderate`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${ADMIN_TOKEN}`
+            },
+            body: JSON.stringify({ status })
+        });
+
+        if (resp.ok) {
+            window.location.reload();
+        } else {
+            const data = await resp.json();
+            if (resp.status === 401) {
+                sessionStorage.removeItem('admin_token');
+                ADMIN_TOKEN = prompt('Token ongeldig. Probeer opnieuw:');
+                if (ADMIN_TOKEN) sessionStorage.setItem('admin_token', ADMIN_TOKEN);
+            }
+            alert(data.detail || 'Fout bij modereren');
+            btn.disabled = false;
+        }
+    } catch (err) {
+        alert('Verbindingsfout');
+        btn.disabled = false;
+    }
+}
+</script>
+{% endblock %}

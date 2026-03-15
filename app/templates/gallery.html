@@ -1,0 +1,104 @@
+{% extends "base.html" %}
+
+{% block title %}Foto's — De Kievit Harmelen{% endblock %}
+
+{% block content %}
+<section class="gallery-section">
+    <h2>Foto's van de gemeenschap</h2>
+
+    {% if photos %}
+    <div class="photo-grid">
+        {% for photo in photos %}
+        <div class="photo-card" id="photo-{{ photo.id }}">
+            <div class="photo-wrapper" onclick="openLightbox('{{ photo.id }}')">
+                <img
+                    src="/photos/{{ photo.thumbnail_path.split('/')[-1] if photo.thumbnail_path else '' }}"
+                    alt="{{ photo.alt_text or photo.description or 'Foto van De Kievit' }}"
+                    loading="lazy"
+                >
+            </div>
+            <div class="photo-info">
+                <p class="photo-attribution">
+                    📸 {{ photo.submitter_name or photo.author_name or photo.author_handle or 'Onbekend' }}
+                    {% if photo.source == 'fediverse' and photo.source_url %}
+                    · <a href="{{ photo.source_url }}" target="_blank" rel="noopener">Bekijk op Fediverse</a>
+                    {% endif %}
+                </p>
+                {% if photo.description %}
+                <p class="photo-description">{{ photo.description[:120] }}</p>
+                {% endif %}
+                <div class="share-buttons">
+                    <a href="https://signal.me/#p/{{ photo.description|default('Mooie foto van De Kievit!', true)|urlencode }}" target="_blank" title="Deel via Signal">Signal</a>
+                    <a href="mailto:?subject=Foto van De Kievit&body=Bekijk deze foto: {{ settings.base_url }}/gallery%23photo-{{ photo.id }}" title="Deel via email">Email</a>
+                    <button onclick="copyLink('{{ settings.base_url }}/gallery#photo-{{ photo.id }}')" title="Kopieer link">🔗 Link</button>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="empty-state">
+        <p>Nog geen foto's. Wees de eerste!</p>
+        <a href="/upload" class="btn btn-primary">Deel je foto's</a>
+    </div>
+    {% endif %}
+</section>
+
+<!-- Lightbox -->
+<div id="lightbox" class="lightbox" onclick="closeLightbox()">
+    <button class="lightbox-close" onclick="closeLightbox()">&times;</button>
+    <img id="lightbox-img" src="" alt="">
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+const photos = [
+    {% for photo in photos %}
+    {
+        id: "{{ photo.id }}",
+        src: "/photos/{{ photo.local_path.split('/')[-1] if photo.local_path else '' }}",
+        alt: "{{ photo.alt_text or photo.description or 'Foto' }}"
+    }{{ "," if not loop.last }}
+    {% endfor %}
+];
+
+let currentIndex = 0;
+
+function openLightbox(photoId) {
+    currentIndex = photos.findIndex(p => p.id === photoId);
+    if (currentIndex < 0) return;
+    const lb = document.getElementById('lightbox');
+    const img = document.getElementById('lightbox-img');
+    img.src = photos[currentIndex].src;
+    img.alt = photos[currentIndex].alt;
+    lb.classList.add('active');
+    document.body.style.overflow = 'hidden';
+}
+
+function closeLightbox() {
+    document.getElementById('lightbox').classList.remove('active');
+    document.body.style.overflow = '';
+}
+
+document.addEventListener('keydown', (e) => {
+    const lb = document.getElementById('lightbox');
+    if (!lb.classList.contains('active')) return;
+    if (e.key === 'Escape') closeLightbox();
+    if (e.key === 'ArrowRight' && currentIndex < photos.length - 1) {
+        currentIndex++;
+        document.getElementById('lightbox-img').src = photos[currentIndex].src;
+    }
+    if (e.key === 'ArrowLeft' && currentIndex > 0) {
+        currentIndex--;
+        document.getElementById('lightbox-img').src = photos[currentIndex].src;
+    }
+});
+
+function copyLink(url) {
+    navigator.clipboard.writeText(url).then(() => {
+        alert('Link gekopieerd!');
+    });
+}
+</script>
+{% endblock %}

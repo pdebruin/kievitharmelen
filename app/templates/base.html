@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}De Kievit Harmelen{% endblock %}</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <link rel="alternate" type="application/rss+xml" title="De Kievit Foto's" href="/feed">
+    {% block head %}{% endblock %}
+</head>
+<body>
+    <nav class="top-nav">
+        <div class="nav-inner">
+            <a href="/" class="nav-link">Foto's</a>
+            <a href="/upload" class="nav-link">Deel je foto's</a>
+            <a href="/feed" class="nav-link">RSS</a>
+        </div>
+    </nav>
+
+    <header class="site-header">
+        <div class="header-inner">
+            <h1 class="site-title">De Kievit Harmelen</h1>
+            <p class="site-subtitle">Natuur &amp; educatie in het hart van Harmelen</p>
+        </div>
+    </header>
+
+    <main class="content">
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer class="site-footer">
+        <div class="footer-inner">
+            <p>&copy; Stichting de Kievit Harmelen</p>
+            <p class="footer-links">
+                <a href="/feed">RSS Feed</a> ·
+                <a href="/docs">API Docs</a>
+            </p>
+        </div>
+    </footer>
+
+    {% block scripts %}{% endblock %}
+</body>
+</html>
